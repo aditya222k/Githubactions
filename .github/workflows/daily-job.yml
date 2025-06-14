@@ -1,12 +1,12 @@
-name: Daily Bright Data Trigger
+name: Bright Data Trigger on Push
 
 on:
-  schedule:
-    - cron: '0 13 * * *'  # 9 AM EST == 13:00 UTC (UTC is required for cron)
-  workflow_dispatch:      # Optional: allows manual trigger via GitHub UI
+  push:
+    branches:
+      - main  # Or the branch you want to watch
 
 jobs:
-  run-daily-trigger:
+  run-on-push:
     runs-on: ubuntu-latest
 
     steps:
