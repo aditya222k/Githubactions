@@ -1,0 +1,25 @@
+name: Daily Bright Data Trigger
+
+on:
+  schedule:
+    - cron: '0 13 * * *'  # 9 AM EST == 13:00 UTC (UTC is required for cron)
+  workflow_dispatch:      # Optional: allows manual trigger via GitHub UI
+
+jobs:
+  run-daily-trigger:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Run main.py
+        run: python main.py
