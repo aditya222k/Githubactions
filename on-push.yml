@@ -3,7 +3,7 @@ name: Bright Data Trigger on Push
 on:
   push:
     branches:
-      - main  # Or the branch you want to watch
+      - main  # Update if your main branch has a different name
 
 jobs:
   run-on-push:
@@ -21,5 +21,18 @@ jobs:
       - name: Install dependencies
         run: pip install requests
 
-      - name: Run main.py
+      - name: Run Bright Data Trigger Script
+        env:
+          BRIGHTDATA_API_KEY: ${{ secrets.BRIGHTDATA_API_KEY }}
         run: python main.py
+
+      - name: Send Slack Notification
+        if: always()
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          STATUS="✅ Success"
+          if [ "${{ job.status }}" != "success" ]; then STATUS="❌ Failed"; fi
+          curl -X POST -H 'Content-type: application/json' \
+            --data "{\"text\":\"$STATUS: *Push-triggered Bright Data job* ran on \`${{ github.ref_name }}\` by \`${{ github.actor }}\`.\n<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View Run>\"}" \
+            "$SLACK_WEBHOOK_URL"
