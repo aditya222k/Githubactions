@@ -1,12 +1,12 @@
-name: Daily Bright Data Trigger
+name: Bright Data Trigger on Push
 
 on:
-  schedule:
-    - cron: '0 13 * * *'  # 13:00 UTC = 9 AM EST
-  workflow_dispatch:  # Optional: allows manual triggering from GitHub UI
+  push:
+    branches:
+      - main  # Update if your main branch has a different name
 
 jobs:
-  run-daily-trigger:
+  run-on-push:
     runs-on: ubuntu-latest
 
     steps:
@@ -27,12 +27,12 @@ jobs:
         run: python main.py
 
       - name: Send Slack Notification
-        if: always()  # Change to `success()` to send only on success
+        if: always()
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         run: |
           STATUS="✅ Success"
           if [ "${{ job.status }}" != "success" ]; then STATUS="❌ Failed"; fi
           curl -X POST -H 'Content-type: application/json' \
-            --data "{\"text\":\"$STATUS: *Daily Bright Data Trigger* ran on \`${{ github.ref_name }}\` by \`${{ github.actor }}\`.\n<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View Run>\"}" \
+            --data "{\"text\":\"$STATUS: *Push-triggered Bright Data job* ran on \`${{ github.ref_name }}\` by \`${{ github.actor }}\`.\n<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View Run>\"}" \
             "$SLACK_WEBHOOK_URL"
