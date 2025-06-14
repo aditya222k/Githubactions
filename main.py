@@ -14,7 +14,7 @@ params = {
 }
 data = [
     {"location": "United States", "keyword": "product manager", "country": "US",
-     "time_range": "Past week", "experience_level": "Internship", "job_type": "",
+     "time_range": "Past 24 hours", "experience_level": "Internship", "job_type": "",
      "remote": "", "company": ""},
 ]
 
