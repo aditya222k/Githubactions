@@ -2,8 +2,8 @@ name: Daily Bright Data Trigger
 
 on:
   schedule:
-    - cron: '0 13 * * *'  # 9 AM EST == 13:00 UTC (UTC is required for cron)
-  workflow_dispatch:      # Optional: allows manual trigger via GitHub UI
+    - cron: '0 13 * * *'  # 13:00 UTC = 9 AM EST
+  workflow_dispatch:  # Optional: allows manual triggering from GitHub UI
 
 jobs:
   run-daily-trigger:
@@ -21,5 +21,18 @@ jobs:
       - name: Install dependencies
         run: pip install requests
 
-      - name: Run main.py
+      - name: Run Bright Data Trigger Script
+        env:
+          BRIGHTDATA_API_KEY: ${{ secrets.BRIGHTDATA_API_KEY }}
         run: python main.py
+
+      - name: Send Slack Notification
+        if: always()  # Change to `success()` to send only on success
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          STATUS="✅ Success"
+          if [ "${{ job.status }}" != "success" ]; then STATUS="❌ Failed"; fi
+          curl -X POST -H 'Content-type: application/json' \
+            --data "{\"text\":\"$STATUS: *Daily Bright Data Trigger* ran on \`${{ github.ref_name }}\` by \`${{ github.actor }}\`.\n<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View Run>\"}" \
+            "$SLACK_WEBHOOK_URL"
