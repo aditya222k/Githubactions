@@ -31,7 +31,7 @@ jobs:
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         run: |
-          STATUS="✅ Success"
+          STATUS="✅ Success [https://brightdata.com/cp/scrapers/api/gd_lpfll7v5hcqtkxl6l/keyword/logs?id=hl_9fd58746]"
           if [ "${{ job.status }}" != "success" ]; then STATUS="❌ Failed"; fi
           curl -X POST -H 'Content-type: application/json' \
             --data "{\"text\":\"$STATUS: *Push-triggered Bright Data job* ran on \`${{ github.ref_name }}\` by \`${{ github.actor }}\`.\n<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View Run>\"}" \
